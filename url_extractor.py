@@ -2,14 +2,112 @@
 # @Author: ZwEin
 # @Date:   2016-07-26 13:48:04
 # @Last Modified by:   ZwEin
-# @Last Modified time: 2016-07-26 13:50:42
+# @Last Modified time: 2016-07-26 15:00:09
 
+"""
+Inspired by imranghory's urlextractor at https://github.com/imranghory/urlextractor
+
+"""
+
+import re
+import os
+import sys
+
+# Regular expression accelerator
+# Modules used to accelerate execution of a large collection of regular expressions using the Aho-Corasick algorithms.
+import esm
+
+# Internationalized Domain Names in Applications (IDNA)
+# https://pypi.python.org/pypi/idna
+import idna 
+
+# Accurately separate the TLD from the registered domain and subdomains of a URL, using the Public Suffix List.
+# https://github.com/john-kurkowski/tldextract
+import tldextract
+
+######################################################################
+#   Constant
+######################################################################
+
+######################################################################
+#   Regular Expression
+######################################################################
+
+re_pretld = re.compile('[a-z0-9-.]+?$', re.IGNORECASE)
+re_posttld = re.compile(':?[0-9]*[/[!#$&-;=?a-z]+]?', re.IGNORECASE)
+
+######################################################################
+#   Main Scripts
+######################################################################
 
 class URLExtractor(object):
-    def __init__(self):
-        pass
+
+    def __init_tld_index():
+        tldindex = esm.Index()
+        tlds = (tldextract.TLDExtract()._get_tld_extractor().tlds)
+        ldindex = esm.Index()
+        for tld in tlds:
+            tldindex.enter('.' + tld.encode('idna'))
+        tldindex.fix()
+        return tldindex
+    
+    tldindex = __init_tld_index()
 
 
     @staticmethod
-    def extract(text):
+    def preprocess(text):
         pass
+
+    @staticmethod
+    def query(text):
+        ans = []
+        exts = URLExtractor.tldindex.query(text)
+        for ext in exts:
+            pretld, posttld = None, None
+            url = ''
+            tld = ext[1]
+            startpt, endpt = ext[0][0], ext[0][1]
+            if len(text) > endpt:
+                nextcharacter = text[endpt]
+                if re.match("[a-z0-9-.]", nextcharacter):
+                    continue
+                posttld = re_posttld.match(text[endpt:])
+            pretld = re_pretld.search(text[:startpt])
+            if pretld:
+                url = pretld.group(0)
+                startpt -= len(pretld.group(0))
+            url += tld
+            if posttld:
+                url += posttld.group(0)     
+                endpt += len(posttld.group(0))
+            url = url.rstrip(',.') 
+            ans.append(url)
+        return list(set(ans))
+
+    @staticmethod
+    def extract(text):
+        # preprocess
+        
+        ans = []
+
+        ans = URLExtractor.query(text)
+        ans = [x for x in ans if x]
+
+        # results = []
+        # tlds = (tldextract.TLDExtract()._get_tld_extractor().tlds)
+        # tldindex = esm.Index()
+        # for tld in tlds:
+        #     tldindex.enter("." + tld.encode("idna"))
+        # tldindex.fix()
+        # tldsfound = tldindex.query(text)
+        # results = [extractUrl(text, tld) for tld in tldsfound]
+        # results = [x for x in results if x] # remove nulls
+        # return results
+        return ans
+
+
+
+
+if __name__ == '__main__':
+    text = 'hello xixi https://www.todomasajes.net/bk/flor/bk00.htm world'
+    print URLExtractor.extract(text)
