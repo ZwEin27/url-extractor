@@ -2,7 +2,7 @@
 # @Author: ZwEin
 # @Date:   2016-07-26 13:48:04
 # @Last Modified by:   ZwEin
-# @Last Modified time: 2016-07-26 15:08:11
+# @Last Modified time: 2016-07-26 15:32:34
 
 """
 Inspired by imranghory's urlextractor at https://github.com/imranghory/urlextractor
@@ -41,7 +41,7 @@ reg_url_charactor = '[a-z0-9-.]'
 
 re_url_charactor = re.compile(reg_url_charactor, re.IGNORECASE)
 re_pretld = re.compile(reg_url_charactor+'+?$', re.IGNORECASE)
-re_posttld = re.compile(':?[0-9]*[/[!#$&-;=?a-z]+]?', re.IGNORECASE)
+re_posttld = re.compile(':?[0-9]*[/[!#$&-;=?a-z_]+]?', re.IGNORECASE)
 
 ######################################################################
 #   Main Scripts
@@ -59,7 +59,6 @@ class URLExtractor(object):
         return tldindex
     
     tldindex = __init_tld_index()
-
 
     @staticmethod
     def preprocess(text):
@@ -104,9 +103,6 @@ class URLExtractor(object):
         ans = URLExtractor.query(text)
         return ans
 
-
-
-
 if __name__ == '__main__':
-    text = 'hello xixi https://www.todomasajes.net/bk/flor/bk00.htm world'
+    text = 'hello xixi https://www.todomasajes.net/b_k/flor/bk00.htm world'
     print URLExtractor.extract(text)
