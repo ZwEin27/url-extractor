@@ -2,7 +2,7 @@
 # @Author: ZwEin
 # @Date:   2016-07-26 13:48:04
 # @Last Modified by:   ZwEin
-# @Last Modified time: 2016-07-26 15:00:09
+# @Last Modified time: 2016-07-26 15:02:50
 
 """
 Inspired by imranghory's urlextractor at https://github.com/imranghory/urlextractor
@@ -33,7 +33,14 @@ import tldextract
 #   Regular Expression
 ######################################################################
 
-re_pretld = re.compile('[a-z0-9-.]+?$', re.IGNORECASE)
+# preprocess
+
+
+# query
+reg_url_charactor = '[a-z0-9-.]'
+
+re_url_charactor = re.compile(reg_url_charactor, re.IGNORECASE)
+re_pretld = re.compile(reg_url_charactor+'+?$', re.IGNORECASE)
 re_posttld = re.compile(':?[0-9]*[/[!#$&-;=?a-z]+]?', re.IGNORECASE)
 
 ######################################################################
@@ -69,7 +76,7 @@ class URLExtractor(object):
             startpt, endpt = ext[0][0], ext[0][1]
             if len(text) > endpt:
                 nextcharacter = text[endpt]
-                if re.match("[a-z0-9-.]", nextcharacter):
+                if re_url_charactor.match(nextcharacter):
                     continue
                 posttld = re_posttld.match(text[endpt:])
             pretld = re_pretld.search(text[:startpt])
