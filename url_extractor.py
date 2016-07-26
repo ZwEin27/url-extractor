@@ -2,7 +2,7 @@
 # @Author: ZwEin
 # @Date:   2016-07-26 13:48:04
 # @Last Modified by:   ZwEin
-# @Last Modified time: 2016-07-26 15:04:37
+# @Last Modified time: 2016-07-26 15:08:11
 
 """
 Inspired by imranghory's urlextractor at https://github.com/imranghory/urlextractor
@@ -34,7 +34,7 @@ import tldextract
 ######################################################################
 
 # preprocess
-
+re_dot = re.compile(r'(?:\s+?dot\s+?)', re.IGNORECASE)
 
 # query
 reg_url_charactor = '[a-z0-9-.]'
@@ -63,6 +63,12 @@ class URLExtractor(object):
 
     @staticmethod
     def preprocess(text):
+
+        def clean(text):
+            text = re_dot.sub('.', text)
+            return text
+
+        text = clean(text)
         return text
 
     @staticmethod
