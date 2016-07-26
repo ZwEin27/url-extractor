@@ -2,7 +2,7 @@
 # @Author: ZwEin
 # @Date:   2016-07-26 13:48:04
 # @Last Modified by:   ZwEin
-# @Last Modified time: 2016-07-26 15:02:50
+# @Last Modified time: 2016-07-26 15:04:37
 
 """
 Inspired by imranghory's urlextractor at https://github.com/imranghory/urlextractor
@@ -63,7 +63,7 @@ class URLExtractor(object):
 
     @staticmethod
     def preprocess(text):
-        pass
+        return text
 
     @staticmethod
     def query(text):
@@ -89,27 +89,13 @@ class URLExtractor(object):
                 endpt += len(posttld.group(0))
             url = url.rstrip(',.') 
             ans.append(url)
-        return list(set(ans))
+        ans = list(set([_ for _ in ans if _]))
+        return ans
 
     @staticmethod
     def extract(text):
-        # preprocess
-        
-        ans = []
-
+        text= URLExtractor.preprocess(text)
         ans = URLExtractor.query(text)
-        ans = [x for x in ans if x]
-
-        # results = []
-        # tlds = (tldextract.TLDExtract()._get_tld_extractor().tlds)
-        # tldindex = esm.Index()
-        # for tld in tlds:
-        #     tldindex.enter("." + tld.encode("idna"))
-        # tldindex.fix()
-        # tldsfound = tldindex.query(text)
-        # results = [extractUrl(text, tld) for tld in tldsfound]
-        # results = [x for x in results if x] # remove nulls
-        # return results
         return ans
 
 
