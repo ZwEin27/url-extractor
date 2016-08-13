@@ -2,7 +2,7 @@
 # @Author: ZwEin
 # @Date:   2016-07-26 13:48:04
 # @Last Modified by:   ZwEin
-# @Last Modified time: 2016-07-26 15:32:34
+# @Last Modified time: 2016-07-26 18:21:09
 
 """
 Inspired by imranghory's urlextractor at https://github.com/imranghory/urlextractor
@@ -99,6 +99,7 @@ class URLExtractor(object):
 
     @staticmethod
     def extract(text):
+        text = text.encode('ascii', 'ignore')
         text= URLExtractor.preprocess(text)
         ans = URLExtractor.query(text)
         return ans
